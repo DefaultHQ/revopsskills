@@ -1,0 +1,12 @@
+{
+  "name": "revops-skills",
+  "description": "Revenue operations skills for AI agents: funnel and lifecycle design, lead scoring and routing, pipeline hygiene, forecasting, CRM and data quality, territories, quota and comp, GTM metrics, and AI in the revenue stack",
+  "version": "1.0.0",
+  "author": {
+    "name": "Stan Rymkiewicz"
+  },
+  "homepage": "https://github.com/stan-default/revopsskills",
+  "repository": "https://github.com/stan-default/revopsskills",
+  "license": "MIT",
+  "skills": "./skills"
+}

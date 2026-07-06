@@ -1,0 +1,19 @@
+{
+  "name": "revopsskills",
+  "owner": {
+    "name": "Stan Rymkiewicz",
+    "url": "https://github.com/stan-default"
+  },
+  "metadata": {
+    "description": "Revenue operations skills for AI agents: funnel, pipeline, forecasting, CRM data, planning, metrics, and AI in the revenue stack",
+    "version": "1.0.0",
+    "repository": "https://github.com/stan-default/revopsskills"
+  },
+  "plugins": [
+    {
+      "name": "revops-skills",
+      "description": "31 revenue operations skills for RevOps leaders, GTM engineers, and founders: funnel audits, lifecycle stages, lead scoring and routing, handoff SLAs, pipeline hygiene, forecasting, coverage math, deal inspection, win-loss programs, CRM audits, data hygiene, enrichment waterfalls, integrations, migrations, territory design, capacity planning, quota and comp, annual planning, segmentation, a metrics dictionary, attribution, dashboards, board reporting, outbound and inbound ops, renewals, deal desk, and AI in the GTM stack",
+      "source": "./"
+    }
+  ]
+}
