@@ -1,6 +1,6 @@
 # RevOps Skills
 
-32 revenue operations skills for AI agents. Works with Claude Code, Cursor, Codex, Windsurf, and any agent that supports the Agent Skills spec.
+32 revenue operations skills for AI agents. Works with Claude Code, Grok Build, Cursor, Codex, Windsurf, and any agent that supports the Agent Skills spec.
 
 Each skill is a markdown file that gives an agent the frameworks, benchmarks, and output formats a senior RevOps operator would use, so "audit my funnel" produces a stage-by-stage diagnosis with real conversion benchmarks instead of generic advice.
 
@@ -20,6 +20,15 @@ npx skills add DefaultHQ/revopsskills
 /plugin marketplace add DefaultHQ/revopsskills
 /plugin install revops-skills@revopsskills
 ```
+
+**Grok Build:** Grok Build reads skills from `~/.grok/skills/` (and also from `~/.claude/skills/`), so either clone and copy:
+
+```bash
+git clone https://github.com/DefaultHQ/revopsskills.git
+cp -r revopsskills/skills/* ~/.grok/skills/
+```
+
+or install for Claude Code as above and Grok Build will pick the skills up too. Invoke a skill by name, for example `/crm-health-inspection`.
 
 **Manual:** clone the repo and copy `skills/` into your project's `.claude/skills/` (or your agent's equivalent). Git submodule and forking work the same way they would for any skills repo.
 
