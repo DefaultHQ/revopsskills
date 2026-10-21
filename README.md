@@ -1,6 +1,6 @@
 # RevOps Skills
 
-31 revenue operations skills for AI agents. Works with Claude Code, Cursor, Codex, Windsurf, and any agent that supports the Agent Skills spec.
+32 revenue operations skills for AI agents. Works with Claude Code, Cursor, Codex, Windsurf, and any agent that supports the Agent Skills spec.
 
 Each skill is a markdown file that gives an agent the frameworks, benchmarks, and output formats a senior RevOps operator would use, so "audit my funnel" produces a stage-by-stage diagnosis with real conversion benchmarks instead of generic advice.
 
@@ -11,13 +11,13 @@ Corey Haines' [marketingskills](https://github.com/coreyhaines31/marketingskills
 **CLI (recommended):**
 
 ```bash
-npx skills add stan-default/revopsskills
+npx skills add DefaultHQ/revopsskills
 ```
 
 **Claude Code plugin:**
 
 ```
-/plugin marketplace add stan-default/revopsskills
+/plugin marketplace add DefaultHQ/revopsskills
 /plugin install revops-skills@revopsskills
 ```
 
@@ -60,6 +60,7 @@ Run `gtm-context` first. It interviews you once about your motion, segments, fun
 | Skill | What it does |
 |-------|--------------|
 | [crm-audit](skills/crm-audit/SKILL.md) | Field sprawl, automation debt, permissions, the report graveyard |
+| [crm-health-inspection](skills/crm-health-inspection/SKILL.md) | Read-only inspection of Salesforce, HubSpot or Attio data: a 0 to 100 hygiene score, cited violations, and a restaurant-style grade card. Runs a bundled Node 18+ script |
 | [data-hygiene](skills/data-hygiene/SKILL.md) | Dedupe strategy, normalization rules, ongoing hygiene jobs |
 | [enrichment](skills/enrichment/SKILL.md) | Waterfall design, provider evaluation, coverage and accuracy benchmarks |
 | [integrations](skills/integrations/SKILL.md) | Sync architecture, source of truth per object, conflict resolution |
