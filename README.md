@@ -25,7 +25,7 @@ npx skills add DefaultHQ/revopsskills
 
 ```bash
 git clone https://github.com/DefaultHQ/revopsskills.git
-cp -r revopsskills/skills/* ~/.grok/skills/
+mkdir -p ~/.grok/skills && cp -r revopsskills/skills/* ~/.grok/skills/
 ```
 
 or install for Claude Code as above and Grok Build will pick the skills up too. Invoke a skill by name, for example `/crm-health-inspection`.
