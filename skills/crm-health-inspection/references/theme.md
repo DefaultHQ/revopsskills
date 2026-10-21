@@ -131,6 +131,8 @@ CLOSED (under 70):
 ```
 Line: "I'm going to need you to stop sending leads into this until we talk."
 
+GRADE PENDING (grade is `PENDING`: nothing on the premises to inspect): render the grade card with `GRADE PENDING` in place of the letter and say "Nothing on the premises to inspect. I'll come back when there's data." Skip citations, rank and badges.
+
 Delta line: `▲ +{delta} since last inspection` or `▼ {delta} since last inspection`. If the score went up, add: "Look at you. Comeback kitchen."
 
 ## RANK AND XP

@@ -491,8 +491,8 @@ export function score({ accounts = [], contacts = [], opps = [], counts = {}, hi
     totals: counts.totals || { accounts: accounts.length, contacts: contacts.length, open_opps: opps.length },
     sample: { accounts: accounts.length, contacts: contacts.length, opps: opps.length },
     score: total,
-    ...gradeFor(total),
-    rank: rankFor(total),
+    ...(activeStations.length ? gradeFor(total) : { grade: "PENDING", verdict: "NOTHING ON THE PREMISES TO INSPECT" }),
+    rank: activeStations.length ? rankFor(total) : { min: 0, title: "Not yet inspected", line: "Nothing on the premises yet. The inspector will be back." },
     previous_score: prev ? prev.score : null,
     delta: prev ? total - prev.score : null,
     stations,
@@ -833,14 +833,23 @@ export function gradeCardHtml(r, establishment) {
   return `<div class="gradecard g-${letter.toLowerCase()}" role="img" aria-label="Sanitary inspection grade ${letter}">${head}<div class="gc-label">SANITARY INSPECTION GRADE</div><div class="gc-letter">${letter}</div><div class="gc-foot"><b>${esc(establishment)} CRM &middot; ${date}</b>This grade card must be posted in the window</div></div>`;
 }
 
+function inspectorLine(r, pending) {
+  if (pending) return "Nothing on the premises to inspect. I'll come back when there's data.";
+  const top = r.violations[0];
+  if (top) return `Top citation: ${top.label.toLowerCase()}. ${fmt(top.bad)} of them. I'm going to need a minute.`;
+  if (r.score >= 90) return "Honestly? Spotless. I'm a little unsettled.";
+  return "Nothing worth a citation. Nothing worth framing either. Small fixes add up.";
+}
+
 export function renderCard(r) {
   const gradeKey = r.grade === "CLOSED" ? "closed" : r.grade.toLowerCase();
   const closed = r.grade === "CLOSED";
+  const pending = r.grade === "PENDING";
   const rank = r.rank || rankFor(r.score);
-  const nextRank = [...RANKS].reverse().find((x) => x.min > r.score);
+  const nextRank = pending ? null : [...RANKS].reverse().find((x) => x.min > r.score);
   const rankFloor = rank.min;
   const rankCeil = nextRank ? nextRank.min : 100;
-  const rankProgress = Math.round(((r.score - rankFloor) / Math.max(1, rankCeil - rankFloor)) * 100);
+  const rankProgress = nextRank ? Math.round(((r.score - rankFloor) / Math.max(1, rankCeil - rankFloor)) * 100) : 100;
   const crmName = CRM_NAMES[r.crm] || r.crm;
   const totals = r.totals || {};
   const earnedCount = (r.badge_case || []).filter((b) => b.earned).length;
@@ -851,7 +860,7 @@ export function renderCard(r) {
     }
     const share = s.max ? s.points / s.max : 0;
     const rows = r.checks.filter((c) => c.station === key).map((c) => `
-        <li><div class="check-top"><span>${esc(c.label)}</span><span class="nums">${fmt(c.bad)} / ${fmt(c.total)} <em>${pct(c.rate)}</em> <i class="src ${c.source}">${c.source}</i></span></div>
+        <li class="${moodFor(c.points, c.max)}"><div class="check-top"><span>${esc(c.label)}</span><span class="nums">${fmt(c.bad)} / ${fmt(c.total)} <em>${pct(c.rate)}</em> <i class="src ${c.source}">${c.source}</i></span></div>
         <div class="mini"><span class="fill" style="--w:${Math.round((c.points / Math.max(c.max, 0.01)) * 100)}%"></span></div></li>`).join("");
     return `<article class="station ${s.mood}">
       <header><h3>${esc(s.name)}</h3><span class="pillar">${esc(s.pillar)}</span><span class="mood-stamp">${MOOD_STAMP[s.mood]}</span></header>
@@ -880,10 +889,11 @@ export function renderCard(r) {
 
   const delta = r.delta === null || r.delta === undefined ? "" : `<span class="delta ${r.delta >= 0 ? "up" : "down"}">${r.delta >= 0 ? "▲ +" : "▼ "}${r.delta} since last inspection</span>`;
   const brag = `My ${crmName} CRM just got inspected: ${r.score}/100, ${closed ? "CLOSED by order of the RevOps dept" : `grade ${r.grade}`} (${rank.title}). Get yours inspected: default.com/crm-inspection`;
-  const tape = closed ? `<div class="tape" aria-hidden="true"><div>${"CLOSED BY ORDER OF THE REVOPS DEPT &nbsp;&#9888;&nbsp; DO NOT ROUTE LEADS &nbsp;&#9888;&nbsp; ".repeat(6)}</div></div>` : "";
+  const tape = closed ? `<div class="tape-wrap" aria-hidden="true"><div class="tape"><div>${"CLOSED BY ORDER OF THE REVOPS DEPT &nbsp;&#9888;&nbsp; DO NOT ROUTE LEADS &nbsp;&#9888;&nbsp; ".repeat(6)}</div></div></div>` : "";
 
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>document.documentElement.classList.add("js")</script>
 <title>CRM Inspection: ${esc(String(r.score))}/100</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Special+Elite&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -891,16 +901,19 @@ export function renderCard(r) {
   :root {
     --tile-a:#eef3f2; --tile-b:#e2eae8; --paper:#fffdf6; --paper-line:#e9e3d2; --ink:#1d1f24; --muted:#6d6a62; --shadow:rgba(0,0,0,.12);
     --dept:#1f4fbf; --uniform:#24427a; --good:#1f8a4c; --meh:#d99a00; --bad:#d4392b; --chip:#f4efe2;
-    --grade-a:#1b5fae; --grade-b:#23964a; --grade-c:#ef8a0c; --grade-closed:#d4202a;
+    --grade-a:#1b5fae; --grade-b:#23964a; --grade-c:#ef8a0c; --grade-closed:#d4202a; --grade-pending:#6b6b6b;
   }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
     --tile-a:#14181a; --tile-b:#191f21; --paper:#20211f; --paper-line:#2f2f2a; --ink:#f2eee4; --muted:#a6a196; --shadow:rgba(0,0,0,.45); --chip:#2b2b27; --uniform:#3b5fa3;
   } }
   :root { --grade: var(--grade-${gradeKey}); }
   * { box-sizing:border-box; }
+  html, body { overflow-x:clip; }
+  .js:not(.counted) #score { visibility:hidden; }
   body { margin:0; color:var(--ink); font:15px/1.5 Inter, ui-sans-serif, system-ui, sans-serif; background-color:var(--tile-a);
     background-image: linear-gradient(45deg, var(--tile-b) 25%, transparent 25%, transparent 75%, var(--tile-b) 75%), linear-gradient(45deg, var(--tile-b) 25%, transparent 25%, transparent 75%, var(--tile-b) 75%);
     background-size:48px 48px; background-position:0 0, 24px 24px; padding:56px 16px 48px; }
+  .tape-wrap { position:absolute; top:0; left:0; width:100%; height:90px; overflow:hidden; pointer-events:none; z-index:20; }
   .tape { position:absolute; top:22px; left:-5%; width:110%; transform:rotate(-2deg); z-index:20; overflow:hidden; pointer-events:none;
     background:repeating-linear-gradient(-45deg, #ffd200 0 26px, #111 26px 52px); padding:6px 0; box-shadow:0 6px 18px var(--shadow); }
   .tape div { white-space:nowrap; font:400 15px/1 Bungee, Impact, sans-serif; color:#111; background:#ffd200; display:inline-block; padding:6px 0; animation:marquee 30s linear infinite; }
@@ -986,6 +999,7 @@ export function renderCard(r) {
   .check-top .nums { color:var(--muted); } .check-top em { font-style:normal; font-weight:700; color:var(--ink); }
   .src { font-style:normal; font-size:10px; padding:1px 5px; border-radius:4px; background:var(--chip); }
   .mini { height:5px; border-radius:3px; background:var(--chip); overflow:hidden; margin-top:3px; }
+  .checks li.good { --c:var(--good); } .checks li.meh { --c:var(--meh); } .checks li.bad { --c:var(--bad); }
   .mini .fill { display:block; height:100%; width:0; background:var(--c); transition:width 1s ease .8s; }
 
   .tickets { list-style:none; padding:0; margin:0; display:grid; gap:12px; }
@@ -1053,12 +1067,12 @@ ${tape}
   <section class="verdict">
     ${gradeCardHtml(r, crmName)}
     <div>
-      <div class="score-line"><div class="score"><span id="score" data-to="${r.score}">${r.score}</span><small>/100</small></div>${delta}</div>
+      <div class="score-line"><div class="score">${pending ? "?" : `<span id="score" data-to="${r.score}">${r.score}</span>`}<small>/100</small></div>${delta}</div>
       <div class="rank">Rank: ${esc(rank.title)}</div>
       <p class="rank-line">${esc(rank.line)}</p>
-      <div class="xp"><span style="--w:${Math.max(4, Math.min(100, rankProgress))}%"></span></div>
-      <div class="xp-label">${nextRank ? `${nextRank.min - r.score} pts to ${esc(nextRank.title)}` : "Max rank. Nowhere left to climb."}</div>
-      <div class="bubble-row">${INSPECTOR_SVG}<div class="bubble">${esc(r.violations[0] ? `Top citation: ${r.violations[0].label.toLowerCase()}. ${fmt(r.violations[0].bad)} of them. I'm going to need a minute.` : "Honestly? Spotless. I'm a little unsettled.")}</div></div>
+      ${pending ? "" : `<div class="xp"><span style="--w:${Math.max(4, Math.min(100, rankProgress))}%"></span></div>
+      <div class="xp-label">${nextRank ? `${nextRank.min - r.score} pts to ${esc(nextRank.title)}` : "Max rank. Nowhere left to climb."}</div>`}
+      <div class="bubble-row">${INSPECTOR_SVG}<div class="bubble">${esc(inspectorLine(r, pending))}</div></div>
     </div>
   </section>
 
@@ -1091,12 +1105,13 @@ ${r.grade === "A" ? '<canvas id="confetti"></canvas>' : ""}
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   requestAnimationFrame(() => document.body.classList.add("loaded"));
   const el = document.getElementById("score");
-  const to = Number(el.dataset.to);
-  if (!reduce) {
+  const to = el ? Number(el.dataset.to) : 0;
+  if (el && !reduce) {
     const start = performance.now();
     const tick = (t) => { const p = Math.min(1, (t - start) / 1400); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); };
     el.textContent = "0"; requestAnimationFrame(tick);
   }
+  document.documentElement.classList.add("counted");
   const brag = ${JSON.stringify(brag)};
   document.getElementById("brag").addEventListener("click", (e) => {
     const b = e.currentTarget;
