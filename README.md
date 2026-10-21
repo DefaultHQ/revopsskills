@@ -8,11 +8,34 @@ Corey Haines' [marketingskills](https://github.com/coreyhaines31/marketingskills
 
 ## Install
 
-**CLI (recommended):**
+**Any agent, one command.** The [`skills` CLI](https://github.com/vercel-labs/skills) detects which agents you have and installs into each one:
 
 ```bash
 npx skills add DefaultHQ/revopsskills
 ```
+
+Add `--skill <name>` for a single skill, `-a <agent>` to pick the agent, and `-g` to install for your user instead of the current project. For example, just the CRM inspection in Grok Build, for every project:
+
+```bash
+npx skills add DefaultHQ/revopsskills --skill crm-health-inspection -a grok -g
+```
+
+**By agent:**
+
+| Agent | Install | Skills folder (project / user) | Run a skill |
+|---|---|---|---|
+| Claude Code | `npx skills add DefaultHQ/revopsskills -a claude-code`, or the plugin below | `.claude/skills/` / `~/.claude/skills/` | `/crm-health-inspection` |
+| Grok Build | `npx skills add DefaultHQ/revopsskills -a grok` | `.grok/skills/` / `~/.grok/skills/` (also reads `~/.claude/skills/`) | `/crm-health-inspection` |
+| Codex | `npx skills add DefaultHQ/revopsskills -a codex` | `.agents/skills/` / `~/.agents/skills/` | ask for it by name |
+| Cursor | `npx skills add DefaultHQ/revopsskills -a cursor` | `.agents/skills/` / `~/.cursor/skills/` | ask for it by name in Agent mode |
+| GitHub Copilot | `npx skills add DefaultHQ/revopsskills -a github-copilot` | `.agents/skills/` / `~/.copilot/skills/` | ask for it by name in agent mode |
+| Gemini CLI | `npx skills add DefaultHQ/revopsskills -a gemini-cli` | `.agents/skills/` / `~/.gemini/skills/` | ask for it by name |
+| Windsurf | `npx skills add DefaultHQ/revopsskills -a windsurf` | `.windsurf/skills/` / `~/.codeium/windsurf/skills/` | ask for it by name in Cascade |
+| OpenCode | `npx skills add DefaultHQ/revopsskills -a opencode` | `.agents/skills/` / `~/.config/opencode/skills/` | ask for it by name |
+| Cline, Amp, Zed, Warp, Kiro and others | `npx skills add DefaultHQ/revopsskills -a <agent>` | see the [supported agents list](https://github.com/vercel-labs/skills/blob/main/docs/agents.md) | ask for it by name |
+| Grok Bot | not installable as files; use the template kit in [`templates/grok-bot/`](templates/grok-bot/) | n/a | `/crm-health-inspection` inside the Bot |
+
+Every agent discovers skills automatically, so naming the job ("inspect my CRM", "audit my funnel") also works.
 
 **Claude Code plugin:**
 
@@ -21,16 +44,9 @@ npx skills add DefaultHQ/revopsskills
 /plugin install revops-skills@revopsskills
 ```
 
-**Grok Build:** Grok Build reads skills from `~/.grok/skills/` (and also from `~/.claude/skills/`), so either clone and copy:
+**Manual:** clone the repo and copy `skills/` (or one skill folder) into your agent's skills folder from the table above. Git submodules and forks work the same way they would for any skills repo.
 
-```bash
-git clone https://github.com/DefaultHQ/revopsskills.git
-mkdir -p ~/.grok/skills && cp -r revopsskills/skills/* ~/.grok/skills/
-```
-
-or install for Claude Code as above and Grok Build will pick the skills up too. Invoke a skill by name, for example `/crm-health-inspection`.
-
-**Manual:** clone the repo and copy `skills/` into your project's `.claude/skills/` (or your agent's equivalent). Git submodule and forking work the same way they would for any skills repo.
+**What `crm-health-inspection` needs.** It is the one skill that runs code: a bundled, dependency-free Node script. Use it in an agent that can run terminal commands on your machine (all the coding agents above), with Node 18 or later and access to your CRM (the Salesforce CLI logged in, a `HUBSPOT_TOKEN`, or an `ATTIO_API_KEY`). Chat-only apps with no terminal cannot run it; the other skills work anywhere that reads skills.
 
 ## Start here
 
