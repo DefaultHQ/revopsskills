@@ -27,7 +27,7 @@ Script path: `SKILL_DIR/scripts/hygiene.mjs`, where `SKILL_DIR` is the folder ho
 
 1. **Read-only.** Never create, update, merge or delete a CRM record, and never call a write tool such as `crm_write`. If the user asks for a fix, show the records and the fix and let them make it in their CRM.
 2. **Numbers come from the script.** Every count, rate, score and grade you show comes from `score.json`. Never invent or round a number into a different claim.
-3. **Secrets stay in the shell.** Native pulls read `HUBSPOT_TOKEN` and `ATTIO_API_KEY` from the environment. Never print, echo or write a token. If the user pastes one into chat, ask them to export it in their shell instead (`! export HUBSPOT_TOKEN=...`).
+3. **Secrets stay in the shell.** Native pulls read `HUBSPOT_TOKEN` and `ATTIO_API_KEY` from the environment. Never print, echo or write a token. If the user pastes one into chat, ask them to export it in their own terminal instead (`export HUBSPOT_TOKEN=...`) and restart the agent from that shell.
 4. **Nothing leaves the machine.** All output goes to `./crm-inspection-report/`.
 5. **The show is yours.** Script output reaches you, not the user. Render every scene from `references/theme.md` yourself in fenced code blocks, filled from the script's JSON.
 
@@ -38,7 +38,7 @@ Script path: `SKILL_DIR/scripts/hygiene.mjs`, where `SKILL_DIR` is the folder ho
 | Path | When | How |
 |---|---|---|
 | Default MCP | Salesforce or HubSpot, and Default MCP tools are connected (`crm_count`, `crm_query`, `crm_schema`, `crm_duplicates_scan`, `integration_health`) and `integration_health` says `connected` | Follow `references/checks.md` > "MCP path". Cap the sample at 500 per object, since every row passes through the conversation |
-| Salesforce native | `sf` command-line interface (CLI) is logged in (`sf org list`) | `node SKILL_DIR/scripts/hygiene.mjs pull --crm salesforce [--org alias]`. If the CLI is missing: install it, then `! sf org login web` |
+| Salesforce native | `sf` command-line interface (CLI) is logged in (`sf org list`) | `node SKILL_DIR/scripts/hygiene.mjs pull --crm salesforce [--org alias]`. If the CLI is missing: ask the user to install it and run `sf org login web` in their terminal |
 | HubSpot native | `HUBSPOT_TOKEN` is set: a private app token with read scopes on companies, contacts, deals and owners | `node SKILL_DIR/scripts/hygiene.mjs pull --crm hubspot` |
 | Attio native | `ATTIO_API_KEY` is set: an access token with read scopes on records and workspace members | `node SKILL_DIR/scripts/hygiene.mjs pull --crm attio` |
 
