@@ -5,8 +5,8 @@
   "author": {
     "name": "Stan Rymkiewicz"
   },
-  "homepage": "https://github.com/stan-default/revopsskills",
-  "repository": "https://github.com/stan-default/revopsskills",
+  "homepage": "https://github.com/DefaultHQ/revopsskills",
+  "repository": "https://github.com/DefaultHQ/revopsskills",
   "license": "MIT",
   "skills": "./skills"
 }
