@@ -38,7 +38,7 @@ Script path: `SKILL_DIR/scripts/hygiene.mjs`, where `SKILL_DIR` is the folder ho
 | Path | When | How |
 |---|---|---|
 | Default MCP | Salesforce or HubSpot, and Default MCP tools are connected (`crm_count`, `crm_query`, `crm_schema`, `crm_duplicates_scan`, `integration_health`) and `integration_health` says `connected` | Follow `references/checks.md` > "MCP path". Cap the sample at 500 per object, since every row passes through the conversation |
-| Salesforce native | `sf` command-line interface (CLI) is logged in (`sf org list`) | `node SKILL_DIR/scripts/hygiene.mjs pull --crm salesforce [--org alias]`. If the CLI is missing: ask the user to install it and run `sf org login web` in their terminal |
+| Salesforce native | `sf` command-line interface (CLI) is logged in (`sf org list`) | `node SKILL_DIR/scripts/hygiene.mjs pull --crm salesforce [--org alias]`. If the CLI is missing: ask the user to install it and run `sf org login web` in their terminal. On a remote or cloud machine with no local browser, use `sf org login device --instance-url https://login.salesforce.com --alias inspect` (use `https://test.salesforce.com` for a sandbox): show the user the URL and code to approve on their own device, then pass `--org inspect` |
 | HubSpot native | `HUBSPOT_TOKEN` is set: a private app token with read scopes on companies, contacts, deals and owners | `node SKILL_DIR/scripts/hygiene.mjs pull --crm hubspot` |
 | Attio native | `ATTIO_API_KEY` is set: an access token with read scopes on records and workspace members | `node SKILL_DIR/scripts/hygiene.mjs pull --crm attio` |
 
