@@ -33,7 +33,7 @@ npx skills add DefaultHQ/revopsskills --skill crm-health-inspection -a grok -g
 | Windsurf | `npx skills add DefaultHQ/revopsskills -a windsurf` | `.windsurf/skills/` / `~/.codeium/windsurf/skills/` | ask for it by name in Cascade |
 | OpenCode | `npx skills add DefaultHQ/revopsskills -a opencode` | `.agents/skills/` / `~/.config/opencode/skills/` | ask for it by name |
 | Cline, Amp, Zed, Warp, Kiro and others | `npx skills add DefaultHQ/revopsskills -a <agent>` | see the [supported agents list](https://github.com/vercel-labs/skills/blob/main/docs/agents.md) | ask for it by name |
-| Grok Bot | not installable as files; use the template kit in [`templates/grok-bot/`](templates/grok-bot/) | n/a | `/crm-health-inspection` inside the Bot |
+| Grok Bot | template paused: the Bot runs the inspection, but each user must log a CRM into the Bot's cloud computer. Experimental kit in [`templates/grok-bot/`](templates/grok-bot/) | n/a | the Bot starts the inspection on its own |
 
 Every agent discovers skills automatically, so naming the job ("inspect my CRM", "audit my funnel") also works.
 
